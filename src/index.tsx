@@ -1,15 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './components/App/App';
+import { Provider } from 'react-redux';
+import AuthGuard from './components/AuthGuard';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
+import { setupStore } from './store';
 
+const store = setupStore();
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <AuthGuard />
+    </Provider>
   </React.StrictMode>,
 );
 

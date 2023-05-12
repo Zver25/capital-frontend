@@ -1,0 +1,21 @@
+.sidebar-container {
+  width: 300px;
+  padding: 24px 0;
+  background-color: #273641;
+}
+
+.menu-item {
+  cursor: pointer;
+  padding: 8px 24px;
+  font-size: 18px;
+  font-weight: bolder;
+  color: #ffffff;
+
+  &_selected {
+    background-color: #1F2C33;
+    color: #01BBD6;
+  }
+  &:hover {
+    background-color: #1F2C33;
+  }
+}

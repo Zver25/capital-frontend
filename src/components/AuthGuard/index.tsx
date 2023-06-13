@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { tokenSelector } from '../../store/user/selectors';
+import { accessTokenSelector } from '../../store/auth/selectors';
 import Application from '../Application';
 import AuthPage from '../AuthPage';
 
 const AuthGuard: React.FC = (): JSX.Element => {
-  const token = useSelector(tokenSelector);
+  const token: string = useSelector(accessTokenSelector);
 
   return token
     ? <Application />

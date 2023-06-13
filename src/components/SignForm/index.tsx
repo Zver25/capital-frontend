@@ -1,4 +1,3 @@
-import { H1 } from '@blueprintjs/core';
 import React from 'react';
 import logo from '../../assets/images/grow-capital.svg';
 import './style.scss';
@@ -19,7 +18,7 @@ const SignForm: React.FC<SignFormProps> = ({
           alt="Grow Capital Logo"
           title="Grow Capital Logo"
         />
-        <H1 className="sign-form__header">Grow Capital</H1>
+        <h1 className="sign-form__header">Grow Capital</h1>
         {children}
       </div>
     </div>

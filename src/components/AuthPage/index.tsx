@@ -3,7 +3,7 @@ import { useAppDispatch } from '../../store';
 import {
   loginThunk,
   registerThunk,
-} from '../../store/user/thunks';
+} from '../../store/auth/thunks';
 import SignInForm from '../SignInForm';
 import SignUpForm from '../SignUpForm';
 

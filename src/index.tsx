@@ -4,9 +4,8 @@ import { Provider } from 'react-redux';
 import AuthGuard from './components/AuthGuard';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
-import { setupStore } from './store';
+import store from './store';
 
-const store = setupStore();
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );

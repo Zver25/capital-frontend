@@ -1,5 +1,13 @@
-import { Classes, Navbar } from '@blueprintjs/core';
-import React, { useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
+import { useAppDispatch } from '../../store';
+import {
+  fetchExpenseCategoryListThunk,
+  fetchIncomeCategoryListThunk,
+} from '../../store/categories/thunks';
+import { fetchCurrencyListThunk } from '../../store/currencies/thunks';
 import MonthPage from '../MonthPage';
 import Sidebar from '../Sidebar';
 import './style.scss';
@@ -20,7 +28,14 @@ const pages: PageMap = {
 };
 
 const Application: React.FC = (): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [currentItem, setCurrentItem] = useState<string>('');
+
+  useEffect(() => {
+    dispatch(fetchIncomeCategoryListThunk());
+    dispatch(fetchExpenseCategoryListThunk());
+    dispatch(fetchCurrencyListThunk());
+  }, [dispatch]);
 
   const handleItemSelect = (item: string): void => {
     setCurrentItem(item);
@@ -28,7 +43,6 @@ const Application: React.FC = (): JSX.Element => {
 
   return (
     <div className="app">
-      <Navbar className={Classes.DARK} />
       <div className="wrapper">
         <Sidebar
           items={Object.keys(pages)}

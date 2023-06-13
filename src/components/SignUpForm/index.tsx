@@ -1,8 +1,4 @@
-import {
-  Button,
-  FormGroup,
-  InputGroup,
-} from '@blueprintjs/core';
+import { Button, Form, Input } from 'antd';
 import React, {
   ChangeEvent,
   useEffect,
@@ -30,9 +26,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
   useEffect(() => {
     setUsernameError(!username);
   }, [username]);
+
   useEffect(() => {
     setPasswordError(!password);
   }, [password]);
+
   useEffect(() => {
     setConfirmPasswordError(passwordError || password !== confirmPassword);
   }, [passwordError, password, confirmPassword]);
@@ -55,46 +53,80 @@ const SignUpForm: React.FC<SignUpFormProps> = ({
     }
   };
 
+  const comparePasswords = () => (
+    password === confirmPassword
+      ? Promise.resolve('')
+      : Promise.reject(new Error('Password and confirm password are not equal'))
+  );
+
   return (
     <SignForm>
-      <FormGroup>
-        <InputGroup
-          id="username"
-          placeholder="Please enter your username"
-          intent={usernameError ? 'danger' : 'success'}
-          value={username}
-          onChange={handleUsernameChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <InputGroup
-          id="password"
-          placeholder="Please enter your password"
-          type="password"
-          intent={passwordError ? 'danger' : 'success'}
-          value={password}
-          onChange={handlePasswordChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <InputGroup
-          id="confirmPassword"
-          placeholder="Please enter confirmation for password"
-          type="password"
-          value={confirmPassword}
-          intent={confirmPasswordError ? 'danger' : 'success'}
-          onChange={handleConfirmPasswordChange}
-        />
-      </FormGroup>
-      <Button
-        className="sign-up-form__first-button"
-        text="Sign Up"
-        onClick={handleSignUp}
-      />
-      <Button
-        text="Already Registered"
-        onClick={onAlreadyRegistered}
-      />
+      <Form
+        className="sign-up-form__form"
+        layout="vertical"
+        onFinish={handleSignUp}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your username',
+            },
+          ]}
+        >
+          <Input
+            placeholder="Username"
+            value={username}
+            onChange={handleUsernameChange}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your password',
+            },
+          ]}
+        >
+          <Input.Password
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Confirm password"
+          name="confirmPassword"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your password again',
+            },
+            {
+              validator: comparePasswords,
+            },
+          ]}
+        >
+          <Input.Password
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Sign Up
+          </Button>
+          <Button htmlType="button" onClick={() => onAlreadyRegistered()}>
+            Already Registered
+          </Button>
+        </Form.Item>
+      </Form>
     </SignForm>
   );
 };

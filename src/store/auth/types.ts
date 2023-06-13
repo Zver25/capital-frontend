@@ -1,8 +1,9 @@
-export const stateName = 'user';
+export const stateName = 'auth';
 
 export interface UserState {
   isPending: boolean;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   username: string;
 }
 

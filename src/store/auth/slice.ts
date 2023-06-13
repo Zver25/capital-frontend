@@ -3,10 +3,11 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import AuthResponse from '../../services/payloads/AuthResponse';
+import AuthenticationResponse from '../../services/payloads/AuthenticationResponse';
 import { logout } from './actions';
 import {
   loginThunk,
+  refreshTokenThunk,
   registerThunk,
 } from './thunks';
 import {
@@ -16,7 +17,8 @@ import {
 
 const initialState: UserState = {
   isPending: false,
-  token: '',
+  accessToken: '',
+  refreshToken: '',
   username: '',
 };
 
@@ -29,7 +31,7 @@ const userSlice = createSlice({
       logout,
       (state: UserState): UserState => ({
         ...state,
-        token: '',
+        accessToken: '',
         username: '',
       }),
     );
@@ -43,11 +45,10 @@ const userSlice = createSlice({
     );
     builder.addCase(
       loginThunk.fulfilled,
-      (state: UserState, action: PayloadAction<AuthResponse>): UserState => ({
+      (state: UserState, action: PayloadAction<AuthenticationResponse>): UserState => ({
         ...state,
+        ...action.payload,
         isPending: false,
-        token: action.payload.token,
-        username: action.payload.username,
       }),
     );
 
@@ -60,11 +61,18 @@ const userSlice = createSlice({
     );
     builder.addCase(
       registerThunk.fulfilled,
-      (state: UserState, action: PayloadAction<AuthResponse>): UserState => ({
+      (state: UserState, action: PayloadAction<AuthenticationResponse>): UserState => ({
         ...state,
+        ...action.payload,
         isPending: false,
-        token: action.payload.token,
-        username: action.payload.username,
+      }),
+    );
+
+    builder.addCase(
+      refreshTokenThunk.fulfilled,
+      (state: UserState, action: PayloadAction<AuthenticationResponse>): UserState => ({
+        ...state,
+        ...action.payload,
       }),
     );
   },

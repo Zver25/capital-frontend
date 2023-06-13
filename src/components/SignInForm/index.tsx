@@ -1,8 +1,4 @@
-import {
-  Button,
-  FormGroup,
-  InputGroup,
-} from '@blueprintjs/core';
+import { Button, Form, Input } from 'antd';
 import React, {
   ChangeEvent,
   useState,
@@ -46,34 +42,53 @@ const SignInForm: React.FC<SignInFormProps> = ({
 
   return (
     <SignForm>
-      <FormGroup>
-        <InputGroup
-          id="username"
-          placeholder="Please enter your username"
-          intent={usernameError ? 'danger' : 'success'}
-          value={username}
-          onChange={handleUsernameChange}
-        />
-      </FormGroup>
-      <FormGroup>
-        <InputGroup
-          id="username"
-          type="password"
-          placeholder="Please enter your password"
-          intent={passwordError ? 'danger' : 'success'}
-          value={password}
-          onChange={handlePasswordChange}
-        />
-      </FormGroup>
-      <Button
-        className="sign-in-form__first-button"
-        text="Sign In"
-        onClick={handleSignIn}
-      />
-      <Button
-        text="Create Account"
-        onClick={onNewUser}
-      />
+      <Form
+        className="sign-in-form__form"
+        layout="vertical"
+        onFinish={handleSignIn}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your username',
+            },
+          ]}
+        >
+          <Input
+            placeholder="Username"
+            value={username}
+            onChange={handleUsernameChange}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your password',
+            },
+          ]}
+        >
+          <Input.Password
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Sign In
+          </Button>
+          <Button htmlType="button" onClick={() => onNewUser()}>
+            New User
+          </Button>
+        </Form.Item>
+      </Form>
     </SignForm>
   );
 };

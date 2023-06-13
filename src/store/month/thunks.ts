@@ -16,8 +16,8 @@ export const fetchMonthDataThunk = createAsyncThunk<
 >(
   `${stateName}/fetchMonthData`,
   ({ start, end }: MonthDataRequest): Promise<MonthDataResponse> => {
-    const startStr: string = start.toISOString();
-    const endStr: string = end.toISOString();
+    const startStr: string = start.format('YYYY-MM-DD');
+    const endStr: string = end.format('YYYY-MM-DD');
 
     return Promise
       .all([

@@ -31,24 +31,26 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
     {
       title: 'Day',
       dataIndex: 'day',
-      render: (transaction: Transaction): string => (
-        dayjs(transaction.date).format('D')
+      render: (_: void, transaction: Transaction): string => (
+        transaction?.date
+          ? dayjs(transaction?.date).format('D')
+          : ''
       ),
     },
     {
       title: 'Category',
       dataIndex: 'category',
-      render: (transaction: Transaction): string | undefined => (
+      render: (_: void, transaction: Transaction): string | undefined => (
         categoryList
-          .find((category: Category):boolean => category.id === transaction.categoryId)
+          .find((category: Category):boolean => category.id === transaction?.categoryId)
           ?.name
       ),
     },
     {
       title: 'Sum',
       dataIndex: 'sum',
-      render: (transaction: Transaction): string => (
-        `${transaction.amount} ${transaction.currencyCode}`
+      render: (_: void, transaction: Transaction): string => (
+        `${transaction?.amount} ${transaction?.currencyCode}`
       ),
     },
   ];

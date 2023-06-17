@@ -39,51 +39,43 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
   const handlePrevMonth = () => {
     date.current = date.current.add(-1, 'month');
     setState();
-    onSelect(date.current.startOf('M'), date.current.endOf('M'));
   };
 
   const handlePrevYear = () => {
     date.current = date.current.add(-1, 'year');
     setState();
-    onSelect(date.current.startOf('M'), date.current.endOf('M'));
   };
 
   const handleNextMonth = () => {
     date.current = date.current.add(1, 'month');
     setState();
-    onSelect(date.current.startOf('M'), date.current.endOf('M'));
   };
 
   const handleNextYear = () => {
     date.current = date.current.add(1, 'year');
     setState();
-    onSelect(date.current.startOf('M'), date.current.endOf('M'));
   };
 
   return (
-    <Space align="center" className="month-selector">
+    <Space align="center">
       <Button
-        className="month-selector__arrow"
         icon={<DoubleLeftOutlined rev={0} />}
         onClick={handlePrevYear}
       />
       <Button
-        className="month-selector__arrow"
         icon={<LeftOutlined rev={0} />}
         onClick={handlePrevMonth}
       />
-      <div className="month-selector__month">
+      <div style={{ fontSize: '20px', fontWeight: 'bold' }}>
         { month }
         &nbsp;
         { year }
       </div>
       <Button
-        className="month-selector__arrow"
         icon={<RightOutlined rev={0} />}
         onClick={handleNextMonth}
       />
       <Button
-        className="month-selector__arrow"
         icon={<DoubleRightOutlined rev={0} />}
         onClick={handleNextYear}
       />

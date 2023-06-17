@@ -9,12 +9,14 @@ import categoriesSlice from './categories/slice';
 import currenciesSlice from './currencies/slice';
 import monthSlice from './month/slice';
 import userSlice from './auth/slice';
+import yearSlice from './year/slice';
 
 const rootReducer = combineReducers({
   user: userSlice.reducer,
   currencies: currenciesSlice.reducer,
   month: monthSlice.reducer,
   categories: categoriesSlice.reducer,
+  year: yearSlice.reducer,
 });
 
 export const setupStore = () => (

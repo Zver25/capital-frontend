@@ -3,7 +3,12 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { fetchMonthDataThunk } from './thunks';
+import Transaction from '../../entities/Transaction';
+import {
+  deleteExpenseThunk,
+  deleteIncomeThunk,
+  fetchMonthDataThunk,
+} from './thunks';
 import {
   MonthDataResponse,
   MonthState,
@@ -34,6 +39,20 @@ const monthSlice = createSlice({
         ...state,
         ...action.payload,
         isLoading: false,
+      }),
+    );
+    builder.addCase(
+      deleteExpenseThunk.fulfilled,
+      (state: MonthState, action: PayloadAction<string>): MonthState => ({
+        ...state,
+        expenses: state.expenses.filter((expense: Transaction) => expense.id !== action.payload),
+      }),
+    );
+    builder.addCase(
+      deleteIncomeThunk.fulfilled,
+      (state: MonthState, action: PayloadAction<string>): MonthState => ({
+        ...state,
+        incomes: state.incomes.filter((income: Transaction) => income.id !== action.payload),
       }),
     );
   },

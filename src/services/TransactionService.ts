@@ -28,7 +28,7 @@ class TransactionService {
     .then((response: AxiosResponse<Transaction>): Transaction => response.data);
   }
 
-  public delete(transactionId: number): Promise<void> {
+  public delete(transactionId: string): Promise<void> {
     return this.axios.delete<void>(`${this.url}/${transactionId}`)
     .then((response: AxiosResponse<void>): void => response.data);
   }

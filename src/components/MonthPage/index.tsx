@@ -23,12 +23,15 @@ import {
   incomesSelector,
 } from '../../store/month/selectors';
 import {
+  deleteExpenseThunk,
+  deleteIncomeThunk,
   fetchMonthDataThunk,
   saveExpenseThunk,
   saveIncomeThunk,
 } from '../../store/month/thunks';
 import MonthSelector from './MonthSelector';
 import MonthTransactions from './MonthTransactions';
+import './styles.scss';
 
 const MonthPage: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -64,18 +67,26 @@ const MonthPage: React.FC = (): JSX.Element => {
     dispatch(saveIncomeThunk(transaction));
   };
 
+  const handleExpenseTransactionDelete = (transactionId: string): void => {
+    dispatch(deleteExpenseThunk(transactionId));
+  };
+
+  const handleIncomeTransactionDelete = (transactionId: string): void => {
+    dispatch(deleteIncomeThunk(transactionId));
+  };
+
   return (
-    <>
+    <div className="month-page">
       <Row>
         <Col span={24}>
-          <Card style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <Card style={{ display: 'flex', justifyContent: 'center' }}>
             <MonthSelector
               onSelect={handleMonthSelected}
             />
           </Card>
         </Col>
       </Row>
-      <Row gutter={16}>
+      <Row gutter={16} style={{ flex: 'auto 1 1' }}>
         <Col span={12}>
           <MonthTransactions
             title="Expense"
@@ -84,6 +95,7 @@ const MonthPage: React.FC = (): JSX.Element => {
             transactions={expenses}
             onCategoryCreate={handleExpenseCategoryCreate}
             onTransactionSave={handleExpenseTransactionSave}
+            onTransactionDelete={handleExpenseTransactionDelete}
           />
         </Col>
         <Col span={12}>
@@ -94,10 +106,11 @@ const MonthPage: React.FC = (): JSX.Element => {
             transactions={incomes}
             onCategoryCreate={handleIncomeCategoryCreate}
             onTransactionSave={handleIncomeTransactionSave}
+            onTransactionDelete={handleIncomeTransactionDelete}
           />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <div className="sidebar-container">
       {items.map((item: string) => (
         <div
+          key={item}
           role="presentation"
           className={clsx('menu-item', selectedItem === item && 'menu-item_selected')}
           onClick={() => handleItemSelect(item)}

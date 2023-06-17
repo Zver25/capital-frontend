@@ -5,39 +5,67 @@ import {
   DatePicker,
   Input,
   InputNumber,
+  Modal,
   Popover,
   Row,
   Select,
   Space,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useState,
+} from 'react';
 import Category from '../../../entities/Category';
 import Transaction from '../../../entities/Transaction';
-import './styles.scss';
 import SelectCurrency from '../SelectCurrency';
 
-export interface AddTransactionProps {
+export interface EditTransactionModalProps {
+  isOpen: boolean;
+  transaction: Transaction | null;
   categoryList: Array<Category>;
   currencyList: Array<string>;
   onCategoryCreate: (categoryName: string) => void;
+  onClose: () => void;
   onSave: (transaction: Transaction) => void;
 }
-const AddTransaction: React.FC<AddTransactionProps> = ({
+
+const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
+  isOpen,
+  transaction,
   categoryList,
   currencyList,
   onCategoryCreate,
+  onClose,
   onSave,
-}: AddTransactionProps): JSX.Element => {
+}: EditTransactionModalProps): JSX.Element => {
   const [newCategoryName, setNewCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');
   const [isCategoryInvalid, setIsCategoryInvalid] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
   const [isAmountInvalid, setIsAmountInvalid] = useState<boolean>(false);
-  const [currency, setCurrency] = useState<string>('');
+  const [currencyCode, setCurrencyCode] = useState<string>('');
   const [isCurrencyInvalid, setIsCurrencyInvalid] = useState<boolean>(false);
-  const [dateValue, setDateValue] = useState<Dayjs>(dayjs());
-  const actionTitle = 'Add';
+  const [date, setDate] = useState<Dayjs>(dayjs());
+
+  useEffect((): void => {
+    if (transaction) {
+      setCategoryId(transaction.categoryId);
+      setAmount(transaction.amount);
+      setCurrencyCode(transaction.currencyCode);
+      setDate(dayjs(transaction.date));
+    } else {
+      setCategoryId('');
+      setAmount(0);
+      setCurrencyCode('');
+      setDate(dayjs());
+    }
+
+    setIsCategoryInvalid(false);
+    setIsAmountInvalid(false);
+    setIsCurrencyInvalid(false);
+  }, [transaction]);
 
   const handleCategoryChange = (selectedCategoryId: string): void => {
     setIsCategoryInvalid(!selectedCategoryId);
@@ -45,7 +73,7 @@ const AddTransaction: React.FC<AddTransactionProps> = ({
   };
 
   const handleChangeDate = (day: Dayjs | null): void => {
-    setDateValue(day ?? dayjs());
+    setDate(day ?? dayjs());
   };
 
   const handleAmountChange = (updatedAmount: number | null = 0): void => {
@@ -60,27 +88,54 @@ const AddTransaction: React.FC<AddTransactionProps> = ({
 
   const handleCurrencyChange = (code: string): void => {
     setIsCurrencyInvalid(!code);
-    setCurrency(code);
+    setCurrencyCode(code);
+  };
+
+  const handleNewCategoryNameChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setNewCategoryName(event.target.value);
+  };
+
+  const validate = (): boolean => {
+    const isCategoryInvalidNew: boolean = !categoryId;
+    const isAmountInvalidNew: boolean = !(amount > 0);
+    const isCurrencyInvalidNew: boolean = !currencyCode;
+
+    setIsCategoryInvalid(isCategoryInvalidNew);
+    setIsAmountInvalid(isAmountInvalidNew);
+    setIsCurrencyInvalid(isCurrencyInvalidNew);
+
+    return !isCurrencyInvalidNew
+      && !isAmountInvalidNew
+      && !isCurrencyInvalidNew;
   };
 
   const handleSave = (): void => {
-    if (categoryId) {
+    if (validate()) {
       onSave({
+        id: transaction?.id,
         categoryId,
         amount,
-        currencyCode: currency,
-        date: dateValue.toISOString(),
+        currencyCode,
+        date: date.toISOString(),
       });
     }
   };
 
   return (
-    <Row gutter={8}>
-      <Col span={5}>
-        <DatePicker style={{ width: '100%' }} value={dateValue} onChange={handleChangeDate} />
-      </Col>
-      <Col span={8}>
-        <Row>
+    <Modal
+      title={transaction?.id ? 'Edit Transaction' : 'Create Transaction'}
+      open={isOpen}
+      okText="Save"
+      onOk={handleSave}
+      onCancel={onClose}
+    >
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <DatePicker
+          style={{ width: '100%' }}
+          value={date}
+          onChange={handleChangeDate}
+        />
+        <Row gutter={8}>
           <Col flex="1 1 auto">
             <Select
               style={{ width: '100%' }}
@@ -98,14 +153,14 @@ const AddTransaction: React.FC<AddTransactionProps> = ({
               }
             </Select>
           </Col>
-          <Col flex="0 0 32px">
+          <Col flex="0 0 40px">
             <Popover
               title="New category"
               content={(
                 <Space>
                   <Input
                     value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    onChange={handleNewCategoryNameChange}
                   />
                   <Button type="primary" onClick={handleCreateCategory}>Add</Button>
                 </Space>
@@ -116,8 +171,6 @@ const AddTransaction: React.FC<AddTransactionProps> = ({
             </Popover>
           </Col>
         </Row>
-      </Col>
-      <Col span={8}>
         <InputNumber
           style={{ width: '100%' }}
           placeholder="Enter amount"
@@ -128,17 +181,14 @@ const AddTransaction: React.FC<AddTransactionProps> = ({
             <SelectCurrency
               list={currencyList}
               isError={isCurrencyInvalid}
-              value={currency}
+              value={currencyCode}
               onSelect={handleCurrencyChange}
             />
           )}
         />
-      </Col>
-      <Col span={3}>
-        <Button style={{ width: '100%' }} type="primary" onClick={handleSave}>{ actionTitle }</Button>
-      </Col>
-    </Row>
+      </Space>
+    </Modal>
   );
 };
 
-export default AddTransaction;
+export default EditTransactionModal;

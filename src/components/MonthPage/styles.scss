@@ -1,3 +1,10 @@
+.month-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
 .month-page_month-selector {
   display: flex;
   justify-content: center;

@@ -39,12 +39,23 @@ export const saveIncomeThunk = createAsyncThunk<
   ThunkConfiguration
 >(
   `${stateName}/saveIncome`,
-  (transaction: Transaction): Promise<Transaction> => {
-    if (transaction.id) {
-      return incomeService.update(transaction);
-    }
+  (transaction: Transaction): Promise<Transaction> => (
+    transaction.id
+      ? incomeService.update(transaction)
+      : incomeService.create(transaction)
+  ),
+);
 
-    return incomeService.create(transaction);
+export const deleteIncomeThunk = createAsyncThunk<
+  string,
+  string,
+  ThunkConfiguration
+>(
+  `${stateName}/deleteIncome`,
+  async (transactionId: string): Promise<string> => {
+    await incomeService.delete(transactionId);
+
+    return transactionId;
   },
 );
 
@@ -59,4 +70,16 @@ export const saveExpenseThunk = createAsyncThunk<
       ? expenseService.update(transaction)
       : expenseService.create(transaction)
   ),
+);
+export const deleteExpenseThunk = createAsyncThunk<
+  string,
+  string,
+  ThunkConfiguration
+>(
+  `${stateName}/deleteExpense`,
+  async (transactionId: string): Promise<string> => {
+      await expenseService.delete(transactionId);
+
+      return transactionId;
+  },
 );

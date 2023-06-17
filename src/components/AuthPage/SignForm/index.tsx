@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/images/grow-capital.svg';
+import logo from '../../../assets/images/grow-capital.svg';
 import './style.scss';
 
 export interface SignFormProps {

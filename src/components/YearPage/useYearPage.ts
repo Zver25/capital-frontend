@@ -1,5 +1,6 @@
 import { ColumnsType } from 'antd/es/table';
 import {
+  useCallback,
   useEffect,
   useState,
 } from 'react';
@@ -21,38 +22,57 @@ import {
   categoryName,
   numberFormat,
 } from '../../utils';
+import calculateYearTotal from '../../utils/calculateYearTotal';
+import YearStatisticRow from './types';
 
 const renderCashItem = (cashItems: Array<CashItem>): string => (
-  cashItems
+  cashItems && cashItems.length > 0
     ? cashItems
-    .map((item: CashItem): string => (
-      `${numberFormat(item.amount)} ${item.currencyCode}`
-    ))
-    .join(', ')
+      .map((item: CashItem): string => (
+        `${numberFormat(item.amount)} ${item.currencyCode}`
+      ))
+      .join(', ')
     : numberFormat(0)
 );
+
 const useYearPage = () => {
   const dispatch = useAppDispatch();
   const expenseCategories = useSelector(expenseCategoriesSelector);
   const incomeCategories = useSelector(incomeCategoriesSelector);
   const yearExpense = useSelector(yearExpenseSelector);
   const yearIncome = useSelector(yearIncomeSelector);
-  const [dataSource, setDataSource] = useState<Array<YearStatistic>>();
+  const [dataSource, setDataSource] = useState<Array<YearStatisticRow>>();
 
   useEffect(() => {
     setDataSource([
-      ...yearIncome.map((yearItem) => ({
-        ...yearItem,
-        category: categoryName(yearItem.categoryId, incomeCategories),
-      })),
-      ...yearExpense.map((yearItem) => ({
-        ...yearItem,
-        category: categoryName(yearItem.categoryId, incomeCategories),
-      })),
+      {
+        isGroup: true,
+        key: 'income',
+        category: 'Income',
+        ...calculateYearTotal(yearIncome),
+        children: yearIncome.map((yearItem: YearStatistic): YearStatisticRow => ({
+          ...yearItem,
+          isGroup: false,
+          key: yearItem.categoryId,
+          category: categoryName(yearItem.categoryId, incomeCategories),
+        })),
+      },
+      {
+        isGroup: true,
+        key: 'expense',
+        category: 'Expense',
+        ...calculateYearTotal(yearExpense),
+        children: yearExpense.map((yearItem: YearStatistic): YearStatisticRow => ({
+          ...yearItem,
+          isGroup: false,
+          key: yearItem.categoryId,
+          category: categoryName(yearItem.categoryId, expenseCategories),
+        })),
+      },
     ]);
   }, [yearIncome, yearExpense, incomeCategories, expenseCategories]);
 
-  const columns: ColumnsType<YearStatistic> = [
+  const columns: ColumnsType<YearStatisticRow> = [
     {
       title: 'Category',
       key: 'category',
@@ -145,9 +165,12 @@ const useYearPage = () => {
     },
   ];
 
-  const handleMonthSelected = (year: number): void => {
-    dispatch(fetchYearDataThunk(year));
-  };
+  const handleMonthSelected = useCallback(
+    (year: number): void => {
+      dispatch(fetchYearDataThunk(year));
+    },
+  [dispatch],
+  );
 
   return {
     columns,

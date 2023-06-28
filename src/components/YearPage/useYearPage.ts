@@ -22,6 +22,7 @@ import {
   categoryName,
   numberFormat,
 } from '../../utils';
+import calculateCategoryTotal from '../../utils/calculateCategoryTotal';
 import calculateYearTotal from '../../utils/calculateYearTotal';
 import YearStatisticRow from './types';
 
@@ -48,6 +49,7 @@ const useYearPage = () => {
       {
         isGroup: true,
         key: 'income',
+        categoryId: '',
         category: 'Income',
         ...calculateYearTotal(yearIncome),
         children: yearIncome.map((yearItem: YearStatistic): YearStatisticRow => ({
@@ -60,6 +62,7 @@ const useYearPage = () => {
       {
         isGroup: true,
         key: 'expense',
+        categoryId: '',
         category: 'Expense',
         ...calculateYearTotal(yearExpense),
         children: yearExpense.map((yearItem: YearStatistic): YearStatisticRow => ({
@@ -77,6 +80,7 @@ const useYearPage = () => {
       title: 'Category',
       key: 'category',
       dataIndex: 'category',
+      width: 256,
       fixed: 'left',
     },
     {
@@ -162,6 +166,17 @@ const useYearPage = () => {
       dataIndex: Month.DECEMBER,
       width: 150,
       render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
+    },
+    {
+      title: 'Total',
+      key: 'total',
+      width: 256,
+      fixed: 'right',
+      render: (_: void, row: YearStatisticRow) => (
+        renderCashItem(
+          calculateCategoryTotal(row),
+        )
+      ),
     },
   ];
 

@@ -29,6 +29,7 @@ const YearPage: React.FC = (): JSX.Element => {
 
       setScroll({
         x: bounding.width,
+        y: bounding.height,
       });
     }
   }, [cardRef]);
@@ -42,18 +43,27 @@ const YearPage: React.FC = (): JSX.Element => {
           </Card>
         </Col>
       </Row>
-      <Card
-        ref={cardRef}
-        style={{ display: 'flex', justifyContent: 'center' }}
-      >
-        <Table
-          scroll={scroll}
-          pagination={false}
-          size="small"
-          columns={columns}
-          dataSource={dataSource}
-        />
-      </Card>
+      <Row gutter={16} style={{ flex: 'auto 1 1' }}>
+        <Col span={24}>
+          <Card
+            ref={cardRef}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              height: '100%',
+              maxHeight: '100%',
+            }}
+          >
+            <Table
+              scroll={scroll}
+              pagination={false}
+              size="small"
+              columns={columns}
+              dataSource={dataSource}
+            />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

@@ -1,4 +1,7 @@
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -41,6 +44,8 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   onSave,
 }: EditTransactionModalProps): JSX.Element => {
   const [newCategoryName, setNewCategoryName] = useState<string>('');
+  const [isNewCategoryNameError, setIsNewCategoryNameError] = useState(false);
+  const [isNewCategoryPopoverOpen, setIsNewCategoryPopoverOpen] = useState(false);
   const [categoryId, setCategoryId] = useState<string>('');
   const [isCategoryInvalid, setIsCategoryInvalid] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
@@ -82,8 +87,19 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   };
 
   const handleCreateCategory = (): void => {
-    onCategoryCreate(newCategoryName);
+    const categoryName: string = newCategoryName.trim();
+    const newError: boolean = !categoryName;
+
+    if (newError) {
+      setIsNewCategoryNameError(newError);
+      return;
+    }
+
     setNewCategoryName('');
+    setIsNewCategoryPopoverOpen(false);
+    setIsNewCategoryNameError(newError);
+
+    onCategoryCreate(categoryName);
   };
 
   const handleCurrencyChange = (code: string): void => {
@@ -121,6 +137,10 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
     }
   };
 
+  const handlePopoverOpenChange = (newOpen: boolean): void => {
+    setIsNewCategoryPopoverOpen(newOpen);
+  };
+
   return (
     <Modal
       title={transaction?.id ? 'Edit Transaction' : 'Create Transaction'}
@@ -155,17 +175,28 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
           </Col>
           <Col flex="0 0 40px">
             <Popover
-              title="New category"
+              title={(
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignContent: 'center' }}>
+                  <div style={{ lineHeight: '32px' }}>New category name</div>
+                  <Button type="link" onClick={() => setIsNewCategoryPopoverOpen(false)}>
+                    <CloseCircleOutlined rev={undefined} />
+                  </Button>
+                </div>
+              )}
+              open={isNewCategoryPopoverOpen}
+              placement="bottomRight"
+              trigger="click"
               content={(
                 <Space>
                   <Input
                     value={newCategoryName}
+                    status={isNewCategoryNameError ? 'error' : ''}
                     onChange={handleNewCategoryNameChange}
                   />
                   <Button type="primary" onClick={handleCreateCategory}>Add</Button>
                 </Space>
               )}
-              trigger="click"
+              onOpenChange={handlePopoverOpenChange}
             >
               <Button style={{ width: '100%' }} type="primary" icon={<PlusOutlined rev={undefined} />} />
             </Popover>

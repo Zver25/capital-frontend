@@ -7,6 +7,8 @@ import Category from '../../entities/Category';
 import {
   fetchExpenseCategoryListThunk,
   fetchIncomeCategoryListThunk,
+  saveExpenseCategoryThunk,
+  saveIncomeCategoryThunk,
 } from './thunks';
 import {
   CategoriesState,
@@ -35,6 +37,26 @@ const categoriesSlice = createSlice({
       (state: CategoriesState, action: PayloadAction<Array<Category>>): CategoriesState => ({
         ...state,
         income: action.payload,
+      }),
+    );
+    builder.addCase(
+      saveExpenseCategoryThunk.fulfilled,
+      (state: CategoriesState, action: PayloadAction<Category>): CategoriesState => ({
+        ...state,
+        expense: [
+          action.payload,
+          ...state.expense,
+        ],
+      }),
+    );
+    builder.addCase(
+      saveIncomeCategoryThunk.fulfilled,
+      (state: CategoriesState, action: PayloadAction<Category>): CategoriesState => ({
+        ...state,
+        income: [
+          action.payload,
+          ...state.income,
+        ],
       }),
     );
   },

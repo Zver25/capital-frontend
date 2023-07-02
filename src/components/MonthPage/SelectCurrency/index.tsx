@@ -16,6 +16,7 @@ const SelectCurrency: React.FC<SelectCurrencyProps> = ({
 }: SelectCurrencyProps): JSX.Element => (
   <Select
     defaultActiveFirstOption
+    style={{ width: 80 }}
     status={isError ? 'error' : ''}
     value={value}
     onChange={onSelect}

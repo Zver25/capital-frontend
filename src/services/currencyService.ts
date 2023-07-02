@@ -2,6 +2,7 @@ import {
   AxiosInstance,
   AxiosResponse,
 } from 'axios';
+import Currency from '../entities/Currency';
 import axiosInstance from './axiosInstance';
 
 class CurrencyService {
@@ -10,8 +11,16 @@ class CurrencyService {
   constructor(private axios: AxiosInstance) {
   }
 
-  public getList(): Promise<AxiosResponse<Array<string>>> {
+  public getSelected(): Promise<AxiosResponse<Array<string>>> {
     return this.axios.get<Array<string>>(this.url);
+  }
+
+  public getAvailableList(): Promise<AxiosResponse<Array<Currency>>> {
+    return this.axios.get(`${this.url}/available`);
+  }
+
+  public setSelected(currencies: Array<string>): Promise<AxiosResponse<Array<string>>> {
+    return this.axios.post(`${this.url}`, currencies);
   }
 }
 

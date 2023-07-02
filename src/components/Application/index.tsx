@@ -9,6 +9,7 @@ import {
 } from '../../store/categories/thunks';
 import { fetchCurrencyListThunk } from '../../store/currencies/thunks';
 import MonthPage from '../MonthPage';
+import SettingsPage from '../SettingsPage';
 import Sidebar from '../Sidebar';
 import './style.scss';
 import YearPage from '../YearPage';
@@ -16,6 +17,7 @@ import YearPage from '../YearPage';
 enum Pages {
   Month = 'Month',
   Year = 'Year',
+  Settings = 'Settings',
 }
 
 type PageMap = {
@@ -25,6 +27,7 @@ type PageMap = {
 const pages: PageMap = {
   [Pages.Month]: <MonthPage />,
   [Pages.Year]: <YearPage />,
+  [Pages.Settings]: <SettingsPage />,
 };
 
 const Application: React.FC = (): JSX.Element => {

@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { AxiosResponse } from 'axios';
+import Currency from '../../entities/Currency';
 import currencyService from '../../services/currencyService';
 import type { ThunkConfiguration } from '..';
 import { stateName } from './types';
 
-// eslint-disable-next-line import/prefer-default-export
 export const fetchCurrencyListThunk = createAsyncThunk<
   Array<string>,
   void,
@@ -11,7 +12,31 @@ export const fetchCurrencyListThunk = createAsyncThunk<
 >(
   `${stateName}/fetchCurrencyList`,
   (): Promise<Array<string>> => (
-    currencyService.getList()
+    currencyService.getSelected()
       .then((response) => response.data)
+  ),
+);
+
+export const fetchAvailableCurrencyListThunk = createAsyncThunk<
+  Array<Currency>,
+  void,
+  ThunkConfiguration
+>(
+  `${stateName}/fetchAvailableCurrencyList`,
+  (): Promise<Array<Currency>> => (
+    currencyService.getAvailableList()
+      .then((response) => response.data)
+  ),
+);
+
+export const setCurrenciesThunk = createAsyncThunk<
+  Array<string>,
+  Array<string>,
+  ThunkConfiguration
+>(
+  `${stateName}/setCurrencies`,
+  (currencies: Array<string>): Promise<Array<string>> => (
+    currencyService.setSelected(currencies)
+      .then((response: AxiosResponse<Array<string>>) => response.data)
   ),
 );

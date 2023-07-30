@@ -1,4 +1,4 @@
-export interface SidebarProps {
+export interface HeaderProps {
   items: Array<string>;
   selectedItem: string;
 

@@ -10,7 +10,7 @@ import {
 import { fetchCurrencyListThunk } from '../../store/currencies/thunks';
 import MonthPage from '../MonthPage';
 import SettingsPage from '../SettingsPage';
-import Sidebar from '../Sidebar';
+import Header from '../Header';
 import './style.scss';
 import YearPage from '../YearPage';
 
@@ -47,7 +47,7 @@ const Application: React.FC = (): JSX.Element => {
   return (
     <div className="app">
       <div className="wrapper">
-        <Sidebar
+        <Header
           items={Object.keys(pages)}
           selectedItem={currentItem}
           onSelect={handleItemSelect}

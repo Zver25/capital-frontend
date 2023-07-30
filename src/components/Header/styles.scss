@@ -1,0 +1,31 @@
+.header-container {
+  padding: 24px;
+  background-color: #273641;
+  display: flex;
+  justify-content: space-between;
+  color: #ffffff;
+}
+
+.header-menu {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+.menu-item {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bolder;
+  line-height: 32px;
+
+  &_selected {
+    color: #01BBD6;
+  }
+  &:hover {
+    color: #01cfd6;
+  }
+}
+.header-user {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

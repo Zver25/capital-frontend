@@ -1,6 +1,6 @@
 import axios, {
   AxiosInstance,
-  // AxiosResponse,
+  AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
 // import store, { TypedAppDispatch } from '../store';
@@ -22,14 +22,15 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// axiosInstance.interceptors.response.use((response: AxiosResponse<any>): AxiosResponse<any> => {
-//   if (response.status === 401) {
-//     const dispatch = store.dispatch as TypedAppDispatch;
-//
-//     dispatch(refreshTokenThunk());
-//   }
-//
-//   return response;
-// });
+axiosInstance.interceptors.response.use((response: AxiosResponse<any>): AxiosResponse<any> => {
+  if (response.status === 401) {
+    // const dispatch = store.dispatch as TypedAppDispatch;
+    //
+    // dispatch(refreshTokenThunk());
+    sessionStorage.setItem('accessToken', '');
+  }
+
+  return response;
+});
 
 export default axiosInstance;

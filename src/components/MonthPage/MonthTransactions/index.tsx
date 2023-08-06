@@ -51,6 +51,18 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
     setSelectedTransaction(null);
   };
 
+  const handleTransactionSave = (transaction: Transaction): void => {
+    setIsEditModalOpen(false);
+    onTransactionSave(transaction);
+  };
+
+  const categoryNameById = (categoryId: string): string => (
+    categoryList
+      .find((category: Category):boolean => category.id === categoryId)
+        ?.name
+    ?? ''
+  );
+
   const columns: ColumnsType<Transaction> = [
     {
       title: 'Day',
@@ -61,21 +73,29 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
           ? dayjs(transaction?.date).format('D')
           : ''
       ),
+      sorter: (a: Transaction, b: Transaction): number => a.date.localeCompare(b.date),
     },
     {
       title: 'Category',
       dataIndex: 'category',
       render: (_: void, transaction: Transaction): string | undefined => (
-        categoryList
-          .find((category: Category):boolean => category.id === transaction?.categoryId)
-          ?.name
+        categoryNameById(transaction.categoryId)
       ),
+      sorter: (a: Transaction, b: Transaction): number => {
+        const aCategoryName: string = categoryNameById(a.categoryId);
+        const bCategoryName: string = categoryNameById(b.categoryId);
+
+        return aCategoryName.localeCompare(bCategoryName);
+      },
     },
     {
       title: 'Sum',
       dataIndex: 'sum',
       render: (_: void, transaction: Transaction): string => (
         `${transaction?.amount} ${transaction?.currencyCode}`
+      ),
+      sorter: (a: Transaction, b: Transaction): number => (
+        a.amount - b.amount
       ),
     },
     {
@@ -115,7 +135,9 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
         columns={columns}
         pagination={false}
         size="small"
-        dataSource={transactions}
+        dataSource={
+          transactions.map((transaction: Transaction) => ({ ...transaction, key: transaction.id }))
+        }
       />
       <EditTransactionModal
         isOpen={isEditModalOpen}
@@ -124,7 +146,7 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
         currencyList={currencyList}
         onCategoryCreate={onCategoryCreate}
         onClose={() => setIsEditModalOpen(false)}
-        onSave={onTransactionSave}
+        onSave={handleTransactionSave}
       />
     </Card>
   );

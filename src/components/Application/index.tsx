@@ -32,7 +32,7 @@ const pages: PageMap = {
 
 const Application: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const [currentItem, setCurrentItem] = useState<string>('');
+  const [currentItem, setCurrentItem] = useState<string>(Pages.Month);
 
   useEffect(() => {
     dispatch(fetchIncomeCategoryListThunk());

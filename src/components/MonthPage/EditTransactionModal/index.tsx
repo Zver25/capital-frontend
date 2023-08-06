@@ -77,8 +77,9 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
     setCategoryId(selectedCategoryId);
   };
 
-  const handleChangeDate = (day: Dayjs | null): void => {
-    setDate(day ?? dayjs());
+  // TODO: type any because of issue with antd and dayjs
+  const handleChangeDate = (value: any | Dayjs | null): void => {
+    setDate(value ?? dayjs());
   };
 
   const handleAmountChange = (updatedAmount: number | null = 0): void => {
@@ -132,7 +133,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
         categoryId,
         amount,
         currencyCode,
-        date: date.toISOString(),
+        date: date?.toISOString(),
       });
     }
   };
@@ -153,6 +154,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
         <DatePicker
           style={{ width: '100%' }}
           value={date}
+          format="DD.MM.YYYY"
           onChange={handleChangeDate}
         />
         <Row gutter={8}>

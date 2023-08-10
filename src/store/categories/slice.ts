@@ -41,22 +41,16 @@ const categoriesSlice = createSlice({
     );
     builder.addCase(
       saveExpenseCategoryThunk.fulfilled,
-      (state: CategoriesState, action: PayloadAction<Category>): CategoriesState => ({
+      (state: CategoriesState, action: PayloadAction<Array<Category>>): CategoriesState => ({
         ...state,
-        expense: [
-          action.payload,
-          ...state.expense,
-        ],
+        expense: action.payload,
       }),
     );
     builder.addCase(
       saveIncomeCategoryThunk.fulfilled,
-      (state: CategoriesState, action: PayloadAction<Category>): CategoriesState => ({
+      (state: CategoriesState, action: PayloadAction<Array<Category>>): CategoriesState => ({
         ...state,
-        income: [
-          action.payload,
-          ...state.income,
-        ],
+        income: action.payload,
       }),
     );
   },

@@ -125,7 +125,7 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
   ];
 
   return (
-    <Card bordered={false} style={{ height: '100%', maxHeight: '100%' }}>
+    <Card style={{ height: '100%', maxHeight: '100%' }}>
       <Space style={{ width: '100%', justifyContent: 'space-between' }}>
         <h1 style={{ margin: 0 }}>{title}</h1>
         <Button type="primary" onClick={handleTransactionAdd}>Add</Button>

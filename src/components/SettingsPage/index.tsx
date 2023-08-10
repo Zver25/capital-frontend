@@ -10,8 +10,17 @@ import React, {
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
+import Category from '../../entities/Category';
 import Currency from '../../entities/Currency';
 import { useAppDispatch } from '../../store';
+import {
+  expenseSortedCategoriesSelector,
+  incomeSortedCategoriesSelector,
+} from '../../store/categories/selectors';
+import {
+  saveExpenseCategoryThunk,
+  saveIncomeCategoryThunk,
+} from '../../store/categories/thunks';
 import {
   availableListSelector,
   currencyListSelector,
@@ -22,6 +31,7 @@ import {
   setCurrenciesThunk,
 } from '../../store/currencies/thunks';
 import stringIncludesCaseInsensitive from '../../utils/stringIncludesCaseInsensitive';
+import CategoriesEditor from './CategoriesEditor';
 
 interface RecordType {
   key: string;
@@ -33,6 +43,8 @@ const SettingsPage: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const availableCurrencies = useSelector(availableListSelector);
   const currencies = useSelector(currencyListSelector);
+  const expenseCategories = useSelector(expenseSortedCategoriesSelector);
+  const incomeCategories = useSelector(incomeSortedCategoriesSelector);
   const [currenciesSource, setCurrenciesSource] = useState<Array<RecordType>>([]);
   const [selectedCurrencies, setSelectedCurrencies] = useState<Array<string>>([]);
   const [targetCurrencies, setTargetCurrencies] = useState<Array<string>>([]);
@@ -73,6 +85,28 @@ const SettingsPage: React.FC = (): JSX.Element => {
     dispatch(setCurrenciesThunk(targetCurrencies));
   };
 
+  const handleExpenseCategoryCreate = (categoryName: string): void => {
+    dispatch(saveExpenseCategoryThunk({
+      name: categoryName,
+      disabled: false,
+    }));
+  };
+
+  const handleExpenseCategoryChange = (category: Category): void => {
+    dispatch(saveExpenseCategoryThunk(category));
+  };
+
+  const handleIncomeCategoryCreate = (categoryName: string): void => {
+    dispatch(saveIncomeCategoryThunk({
+      name: categoryName,
+      disabled: false,
+    }));
+  };
+
+  const handleIncomeCategoryChange = (category: Category): void => {
+    dispatch(saveIncomeCategoryThunk(category));
+  };
+
   return (
     <div className="settings-page">
       <Row>
@@ -105,6 +139,24 @@ const SettingsPage: React.FC = (): JSX.Element => {
               Save
             </Button>
           </Card>
+        </Col>
+      </Row>
+      <Row gutter={16} style={{ flex: 'auto 1 1', marginTop: '16px' }}>
+        <Col span={12}>
+          <CategoriesEditor
+            title="Expense Categories"
+            categories={expenseCategories}
+            onChange={handleExpenseCategoryChange}
+            onCategoryCreate={handleExpenseCategoryCreate}
+          />
+        </Col>
+        <Col span={12}>
+          <CategoriesEditor
+            title="Income Categories"
+            categories={incomeCategories}
+            onChange={handleIncomeCategoryChange}
+            onCategoryCreate={handleIncomeCategoryCreate}
+          />
         </Col>
       </Row>
     </div>

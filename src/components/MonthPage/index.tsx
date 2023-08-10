@@ -10,8 +10,8 @@ import Category from '../../entities/Category';
 import Transaction from '../../entities/Transaction';
 import { useAppDispatch } from '../../store';
 import {
-  expenseCategoriesSelector,
-  incomeCategoriesSelector,
+  expenseEnabledSortedCategoriesSelector,
+  incomeEnabledSortedCategoriesSelector,
 } from '../../store/categories/selectors';
 import {
   saveExpenseCategoryThunk,
@@ -36,9 +36,9 @@ import './styles.scss';
 const MonthPage: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const currencyList: Array<string> = useSelector(currencyListSelector);
-  const expenseCategories: Array<Category> = useSelector(expenseCategoriesSelector);
+  const expenseCategories: Array<Category> = useSelector(expenseEnabledSortedCategoriesSelector);
   const expenses: Array<Transaction> = useSelector(expensesSelector);
-  const incomeCategories: Array<Category> = useSelector(incomeCategoriesSelector);
+  const incomeCategories: Array<Category> = useSelector(incomeEnabledSortedCategoriesSelector);
   const incomes: Array<Transaction> = useSelector(incomesSelector);
 
   const handleMonthSelected = useCallback(
@@ -51,11 +51,13 @@ const MonthPage: React.FC = (): JSX.Element => {
   const handleExpenseCategoryCreate = (categoryName: string): void => {
     dispatch(saveExpenseCategoryThunk({
       name: categoryName,
+      disabled: false,
     }));
   };
   const handleIncomeCategoryCreate = (categoryName: string): void => {
     dispatch(saveIncomeCategoryThunk({
       name: categoryName,
+      disabled: false,
     }));
   };
 

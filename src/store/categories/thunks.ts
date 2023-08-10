@@ -3,6 +3,10 @@ import type { ThunkConfiguration } from '..';
 import Category from '../../entities/Category';
 import expenseCategoryService from '../../services/expenseCategoryService';
 import incomeCategoryService from '../../services/incomeCategoryService';
+import {
+  expenseCategoriesSelector,
+  incomeCategoriesSelector,
+} from './selectors';
 import { stateName } from './types';
 
 export const fetchIncomeCategoryListThunk = createAsyncThunk<
@@ -17,16 +21,30 @@ export const fetchIncomeCategoryListThunk = createAsyncThunk<
 );
 
 export const saveIncomeCategoryThunk = createAsyncThunk<
-  Category,
+  Array<Category>,
   Category,
   ThunkConfiguration
 >(
   `${stateName}/saveIncomeCategory`,
-  (category: Category): Promise<Category> => (
-    category.id
+  (category: Category, thunkAPI): Promise<Array<Category>> => {
+    const categoryPromise: Promise<Category> = category.id
       ? incomeCategoryService.update(category)
-      : incomeCategoryService.create(category)
-  ),
+      : incomeCategoryService.create(category);
+
+    return categoryPromise
+      .then((newCategory: Category): Array<Category> => {
+        const currentIncomeCategories: Array<Category> = incomeCategoriesSelector(
+          thunkAPI.getState(),
+        );
+
+        return [
+          ...currentIncomeCategories.filter((item: Category): boolean => (
+            item.id !== newCategory.id
+          )),
+          newCategory,
+        ];
+      });
+  },
 );
 
 export const fetchExpenseCategoryListThunk = createAsyncThunk<
@@ -41,14 +59,28 @@ export const fetchExpenseCategoryListThunk = createAsyncThunk<
 );
 
 export const saveExpenseCategoryThunk = createAsyncThunk<
-  Category,
+  Array<Category>,
   Category,
   ThunkConfiguration
 >(
   `${stateName}/saveExpenseCategory`,
-  (category: Category): Promise<Category> => (
-    category.id
+  (category: Category, thunkAPI): Promise<Array<Category>> => {
+    const categoryPromise: Promise<Category> = category.id
       ? expenseCategoryService.update(category)
-      : expenseCategoryService.create(category)
-  ),
+      : expenseCategoryService.create(category);
+
+    return categoryPromise
+      .then((newCategory: Category): Array<Category> => {
+        const currentExpenseCategories: Array<Category> = expenseCategoriesSelector(
+          thunkAPI.getState(),
+        );
+
+        return [
+          ...currentExpenseCategories.filter((item: Category): boolean => (
+            item.id !== newCategory.id
+          )),
+          newCategory,
+        ];
+      });
+  },
 );

@@ -1,0 +1,17 @@
+.category-editor {
+  &__item {
+    display: flex;
+    gap: 16px;
+  }
+
+  &__item-text {
+    &_disabled {
+      text-decoration-line: line-through;
+    }
+  }
+
+  &__item-actions {
+    display: flex;
+    gap: 8px;
+  }
+}

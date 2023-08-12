@@ -70,27 +70,33 @@ export const saveIncomeThunk = createAsyncThunk<
   ThunkConfiguration
 >(
   `${stateName}/saveIncome`,
-  (transaction: Transaction, thunkAPI): Promise<Array<Transaction>> => {
-    const transactionPromise = transaction.id
+  (transaction: Transaction, thunkAPI): Promise<Array<Transaction>> => (
+    transaction.id
       ? incomeService.update(transaction)
-      : incomeService.create(transaction);
+        .then((updatedTransaction: Transaction): Array<Transaction> => (
+          incomesSelector(thunkAPI.getState())
+          .map((item: Transaction): Transaction => (
+            item.id === updatedTransaction.id
+              ? updatedTransaction
+              : item
+          ))
+        ))
+      : incomeService.create(transaction)
+        .then((newTransaction: Transaction): Array<Transaction> => {
+          const { start, end } = startEndSelector(thunkAPI.getState());
+          const updatedIncomes = [...incomesSelector(thunkAPI.getState())];
+          const newTransactionDate = dayjs(newTransaction.date);
 
-    return transactionPromise
-      .then((newTransaction: Transaction): Array<Transaction> => {
-        const { start, end } = startEndSelector(thunkAPI.getState());
-        const updatedIncome = [...incomesSelector(thunkAPI.getState())];
-        const newTransactionDate = dayjs(newTransaction.date);
+          if (
+            (start.isBefore(newTransactionDate) || start.isSame(newTransactionDate))
+            && end.isAfter(newTransactionDate)
+          ) {
+            updatedIncomes.push(newTransaction);
+          }
 
-        if (
-          (start.isBefore(newTransactionDate) || start.isSame(newTransactionDate))
-          && end.isAfter(newTransactionDate)
-        ) {
-          updatedIncome.push(newTransaction);
-        }
-
-        return updatedIncome;
-      });
-  },
+          return updatedIncomes;
+        })
+  ),
 );
 
 export const deleteIncomeThunk = createAsyncThunk<
@@ -112,28 +118,35 @@ export const saveExpenseThunk = createAsyncThunk<
   ThunkConfiguration
 >(
   `${stateName}/saveExpense`,
-  (transaction: Transaction, thunkAPI): Promise<Array<Transaction>> => {
-    const transactionPromise = transaction.id
+  (transaction: Transaction, thunkAPI): Promise<Array<Transaction>> => (
+    transaction.id
       ? expenseService.update(transaction)
-      : expenseService.create(transaction);
+        .then((updatedTransaction: Transaction): Array<Transaction> => (
+          expensesSelector(thunkAPI.getState())
+            .map((item: Transaction): Transaction => (
+              item.id === updatedTransaction.id
+                ? updatedTransaction
+                : item
+            ))
+        ))
+      : expenseService.create(transaction)
+        .then((newTransaction: Transaction): Array<Transaction> => {
+          const { start, end } = startEndSelector(thunkAPI.getState());
+          const updatedExpenses = [...expensesSelector(thunkAPI.getState())];
+          const newTransactionDate = dayjs(newTransaction.date);
 
-    return transactionPromise
-      .then((newTransaction: Transaction): Array<Transaction> => {
-        const { start, end } = startEndSelector(thunkAPI.getState());
-        const updatedExpenses = [...expensesSelector(thunkAPI.getState())];
-        const newTransactionDate = dayjs(newTransaction.date);
-
-        if (
-          (start.isBefore(newTransactionDate) || start.isSame(newTransactionDate))
+          if (
+            (start.isBefore(newTransactionDate) || start.isSame(newTransactionDate))
             && end.isAfter(newTransactionDate)
-        ) {
-          updatedExpenses.push(newTransaction);
-        }
+          ) {
+            updatedExpenses.push(newTransaction);
+          }
 
-        return updatedExpenses;
-      });
-  },
+          return updatedExpenses;
+        })
+  ),
 );
+
 export const deleteExpenseThunk = createAsyncThunk<
   string,
   string,

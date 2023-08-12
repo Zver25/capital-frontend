@@ -103,7 +103,7 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
       width: 88,
       dataIndex: 'actions',
       render: (_: void, transaction: Transaction): JSX.Element => (
-        <Space style={{ gap: '8px' }}>
+        <Space style={{ rowGap: 16, columnGap: 16 }}>
           <Button
             type="primary"
             ghost

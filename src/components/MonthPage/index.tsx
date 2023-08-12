@@ -10,8 +10,8 @@ import Category from '../../entities/Category';
 import Transaction from '../../entities/Transaction';
 import { useAppDispatch } from '../../store';
 import {
-  expenseEnabledSortedCategoriesSelector,
-  incomeEnabledSortedCategoriesSelector,
+  expenseSortedCategoriesSelector,
+  incomeSortedCategoriesSelector,
 } from '../../store/categories/selectors';
 import {
   saveExpenseCategoryThunk,
@@ -36,9 +36,9 @@ import './styles.scss';
 const MonthPage: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const currencyList: Array<string> = useSelector(currencyListSelector);
-  const expenseCategories: Array<Category> = useSelector(expenseEnabledSortedCategoriesSelector);
+  const expenseCategories: Array<Category> = useSelector(expenseSortedCategoriesSelector);
   const expenses: Array<Transaction> = useSelector(expensesSelector);
-  const incomeCategories: Array<Category> = useSelector(incomeEnabledSortedCategoriesSelector);
+  const incomeCategories: Array<Category> = useSelector(incomeSortedCategoriesSelector);
   const incomes: Array<Transaction> = useSelector(incomesSelector);
 
   const handleMonthSelected = useCallback(

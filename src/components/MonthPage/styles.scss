@@ -1,6 +1,7 @@
 .month-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  row-gap: 16px;
+  column-gap: 16px;
   height: 100%;
 }

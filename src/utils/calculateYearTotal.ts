@@ -4,26 +4,25 @@ import {
   monthList,
 } from '../entities/Month';
 import YearStatistic from '../entities/YearStatistic';
-import mergeCashFlow from './mergeCashFlow';
+import mergeCashFlowByCurrencyCode from './mergeCashFlowByCurrencyCode';
 
 const calculateYearTotal = (statistic: Array<YearStatistic>): Omit<YearStatistic, 'categoryId'> => ({
   ...monthList
-  .reduce(
-    (obj, month: Month) => (
-      {
+    .reduce(
+      (obj, month: Month) => ({
         ...obj,
         [month]: statistic
-        .map((yearStatistic: YearStatistic) => yearStatistic[month])
-        .reduce(
-          (arr: Array<CashItem>, item: Array<CashItem>): Array<CashItem> => (
-            mergeCashFlow(arr, item)
-          ),
-          [],
-        )
-        ?? [],
+          .map((yearStatistic: YearStatistic): Array<CashItem> => yearStatistic[month])
+          .reduce(
+            (arr: Array<CashItem>, item: Array<CashItem>): Array<CashItem> => (
+              mergeCashFlowByCurrencyCode(arr, item)
+            ),
+            [],
+          )
+          ?? [],
       }),
-    {} as Omit<YearStatistic, 'categoryId'>,
-  ),
+      {} as Omit<YearStatistic, 'categoryId'>,
+    ),
 });
 
 export default calculateYearTotal;

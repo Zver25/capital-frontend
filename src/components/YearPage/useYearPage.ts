@@ -24,6 +24,7 @@ import {
 } from '../../utils';
 import calculateCategoryTotal from '../../utils/calculateCategoryTotal';
 import calculateYearTotal from '../../utils/calculateYearTotal';
+import deepClone from '../../utils/deepClone';
 import YearStatisticRow from './types';
 
 const renderCashItem = (cashItems: Array<CashItem>): string => (
@@ -51,7 +52,7 @@ const useYearPage = () => {
         key: 'income',
         categoryId: '',
         category: 'Income',
-        ...calculateYearTotal(yearIncome),
+        ...calculateYearTotal(deepClone(yearIncome)),
         children: yearIncome.map((yearItem: YearStatistic): YearStatisticRow => ({
           ...yearItem,
           isGroup: false,
@@ -64,7 +65,7 @@ const useYearPage = () => {
         key: 'expense',
         categoryId: '',
         category: 'Expense',
-        ...calculateYearTotal(yearExpense),
+        ...calculateYearTotal(deepClone(yearExpense)),
         children: yearExpense.map((yearItem: YearStatistic): YearStatisticRow => ({
           ...yearItem,
           isGroup: false,

@@ -1,6 +1,9 @@
 import CashItem from '../entities/CashItem';
 
-const mergeCashFlow = (source: Array<CashItem>, target: Array<CashItem>): Array<CashItem> => {
+const mergeCashFlowByCurrencyCode = (
+  source: Array<CashItem>,
+  target: Array<CashItem>,
+): Array<CashItem> => {
   const result: CashItem[] = [...target];
 
   source.forEach((item: CashItem): void => {
@@ -18,4 +21,4 @@ const mergeCashFlow = (source: Array<CashItem>, target: Array<CashItem>): Array<
   return result;
 };
 
-export default mergeCashFlow;
+export default mergeCashFlowByCurrencyCode;

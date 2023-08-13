@@ -107,7 +107,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
         categoryId,
         amount,
         currencyCode,
-        date: date?.toISOString(),
+        date: date?.format('YYYY-MM-DD'),
       });
     }
   };

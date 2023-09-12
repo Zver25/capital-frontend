@@ -1,12 +1,16 @@
-import { ColumnsType } from 'antd/es/table';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
-import CashItem from '../../entities/CashItem';
-import { Month } from '../../entities/Month';
+import Category from '../../entities/Category';
+import {
+  Month,
+  monthToString,
+} from '../../entities/Month';
 import YearStatistic from '../../entities/YearStatistic';
 import { useAppDispatch } from '../../store';
 import {
@@ -14,28 +18,20 @@ import {
   incomeCategoriesSelector,
 } from '../../store/categories/selectors';
 import {
+  categoryMonthTransactionsSelector,
+  isCategoryMonthLoadingSelector,
   yearExpenseSelector,
   yearIncomeSelector,
 } from '../../store/year/selectors';
-import { fetchYearDataThunk } from '../../store/year/thunks';
 import {
-  categoryName,
-  numberFormat,
-} from '../../utils';
-import calculateCategoryTotal from '../../utils/calculateCategoryTotal';
+  fetchExpenseCategoryMonthThunk,
+  fetchIncomeCategoryMonthThunk,
+  fetchYearDataThunk,
+} from '../../store/year/thunks';
+import { categoryName } from '../../utils';
 import calculateYearTotal from '../../utils/calculateYearTotal';
 import deepClone from '../../utils/deepClone';
 import YearStatisticRow from './types';
-
-const renderCashItem = (cashItems: Array<CashItem>): string => (
-  cashItems && cashItems.length > 0
-    ? cashItems
-      .map((item: CashItem): string => (
-        `${numberFormat(item.amount)} ${item.currencyCode}`
-      ))
-      .join(', ')
-    : numberFormat(0)
-);
 
 const useYearPage = () => {
   const dispatch = useAppDispatch();
@@ -43,9 +39,44 @@ const useYearPage = () => {
   const incomeCategories = useSelector(incomeCategoriesSelector);
   const yearExpense = useSelector(yearExpenseSelector);
   const yearIncome = useSelector(yearIncomeSelector);
-  const [dataSource, setDataSource] = useState<Array<YearStatisticRow>>();
+  const categoryMonthTransactions = useSelector(categoryMonthTransactionsSelector);
+  const isCategoryMonthLoading = useSelector(isCategoryMonthLoadingSelector);
+  const year = useRef<number>(0);
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [categories, setCategories] = useState<Array<Category>>([]);
+  const [isCategoryMonthVisible, setIsCategoryMonthVisible] = useState<boolean>(false);
+  const [dataSource, setDataSource] = useState<Array<YearStatisticRow>>([]);
+
+  const handleCloseModal = () => {
+    setIsCategoryMonthVisible(false);
+  };
 
   useEffect(() => {
+    const handleIncomeShowModal = (month: Month, categoryId: string) => {
+      const start: Dayjs = dayjs().date(1).month(month - 1).year(year.current);
+
+      setIsCategoryMonthVisible(true);
+      setCategories(incomeCategories);
+      setSelectedMonth(monthToString(month));
+      dispatch(fetchIncomeCategoryMonthThunk({
+        category: categoryId,
+        start,
+        end: start.endOf('M'),
+      }));
+    };
+    const handleExpenseShowModal = (month: Month, categoryId: string) => {
+      const start: Dayjs = dayjs().date(1).month(month - 1).year(year.current);
+
+      setIsCategoryMonthVisible(true);
+      setCategories(expenseCategories);
+      setSelectedMonth(monthToString(month));
+      dispatch(fetchExpenseCategoryMonthThunk({
+        category: categoryId,
+        start,
+        end: start.endOf('M'),
+      }));
+    };
+
     setDataSource([
       {
         isGroup: true,
@@ -58,6 +89,7 @@ const useYearPage = () => {
           isGroup: false,
           key: yearItem.categoryId,
           category: categoryName(yearItem.categoryId, incomeCategories),
+          onClick: handleIncomeShowModal,
         })),
       },
       {
@@ -71,127 +103,35 @@ const useYearPage = () => {
           isGroup: false,
           key: yearItem.categoryId,
           category: categoryName(yearItem.categoryId, expenseCategories),
+          onClick: handleExpenseShowModal,
         })),
       },
     ]);
-  }, [yearIncome, yearExpense, incomeCategories, expenseCategories]);
-
-  const columns: ColumnsType<YearStatisticRow> = [
-    {
-      title: 'Category',
-      key: 'category',
-      dataIndex: 'category',
-      width: 256,
-      fixed: 'left',
-    },
-    {
-      title: 'January',
-      key: Month.JANUARY,
-      dataIndex: Month.JANUARY,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'February',
-      key: Month.FEBRUARY,
-      dataIndex: Month.FEBRUARY,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'March',
-      key: Month.MARCH,
-      dataIndex: Month.MARCH,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'April',
-      key: Month.APRIL,
-      dataIndex: Month.APRIL,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'May',
-      key: Month.MAY,
-      dataIndex: Month.MAY,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'June',
-      key: Month.JUNE,
-      dataIndex: Month.JUNE,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'July',
-      key: Month.JULY,
-      dataIndex: Month.JULY,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'August',
-      key: Month.AUGUST,
-      dataIndex: Month.AUGUST,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'September',
-      key: Month.SEPTEMBER,
-      dataIndex: Month.SEPTEMBER,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'October',
-      key: Month.OCTOBER,
-      dataIndex: Month.OCTOBER,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'November',
-      key: Month.NOVEMBER,
-      dataIndex: Month.NOVEMBER,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'December',
-      key: Month.DECEMBER,
-      dataIndex: Month.DECEMBER,
-      width: 150,
-      render: (cashItems: Array<CashItem>) => renderCashItem(cashItems),
-    },
-    {
-      title: 'Total',
-      key: 'total',
-      width: 256,
-      fixed: 'right',
-      render: (_: void, row: YearStatisticRow) => (
-        renderCashItem(
-          calculateCategoryTotal(row),
-        )
-      ),
-    },
-  ];
+  }, [
+    dispatch,
+    yearIncome,
+    yearExpense,
+    incomeCategories,
+    expenseCategories,
+  ]);
 
   const handleMonthSelected = useCallback(
-    (year: number): void => {
-      dispatch(fetchYearDataThunk(year));
+    (value: number): void => {
+      year.current = value;
+      dispatch(fetchYearDataThunk(value));
     },
   [dispatch],
   );
 
   return {
-    columns,
+    categories,
+    selectedMonth,
     dataSource,
+    isCategoryMonthVisible,
+    categoryMonthTransactions,
+    isCategoryMonthLoading,
     handleMonthSelected,
+    handleCloseModal,
   };
 };
 

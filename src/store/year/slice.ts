@@ -3,7 +3,12 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { fetchYearDataThunk } from './thunks';
+import Transaction from '../../entities/Transaction';
+import {
+  fetchExpenseCategoryMonthThunk,
+  fetchIncomeCategoryMonthThunk,
+  fetchYearDataThunk,
+} from './thunks';
 import {
   stateName,
   YearResponse,
@@ -14,6 +19,8 @@ const initialState: YearState = {
   isDataLoading: false,
   expense: [],
   income: [],
+  isMonthLoading: false,
+  month: [],
 };
 
 const yearSlice = createSlice({
@@ -43,6 +50,52 @@ const yearSlice = createSlice({
         isDataLoading: false,
         expense: [],
         income: [],
+      }),
+    );
+
+    builder.addCase(
+      fetchIncomeCategoryMonthThunk.pending,
+      (state: YearState): YearState => ({
+        ...state,
+        isMonthLoading: true,
+      }),
+    );
+    builder.addCase(
+      fetchIncomeCategoryMonthThunk.rejected,
+      (state: YearState): YearState => ({
+        ...state,
+        isMonthLoading: false,
+      }),
+    );
+    builder.addCase(
+      fetchIncomeCategoryMonthThunk.fulfilled,
+      (state: YearState, action: PayloadAction<Array<Transaction>>): YearState => ({
+        ...state,
+        isMonthLoading: false,
+        month: action.payload,
+      }),
+    );
+
+    builder.addCase(
+      fetchExpenseCategoryMonthThunk.pending,
+      (state: YearState): YearState => ({
+        ...state,
+        isMonthLoading: true,
+      }),
+    );
+    builder.addCase(
+      fetchExpenseCategoryMonthThunk.rejected,
+      (state: YearState): YearState => ({
+        ...state,
+        isMonthLoading: false,
+      }),
+    );
+    builder.addCase(
+      fetchExpenseCategoryMonthThunk.fulfilled,
+      (state: YearState, action: PayloadAction<Array<Transaction>>): YearState => ({
+        ...state,
+        isMonthLoading: false,
+        month: action.payload,
       }),
     );
   },

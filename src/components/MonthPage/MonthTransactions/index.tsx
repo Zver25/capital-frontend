@@ -11,6 +11,9 @@ import React, { useState } from 'react';
 import Category from '../../../entities/Category';
 import Transaction from '../../../entities/Transaction';
 import './styles.scss';
+import categoryNameById from '../../../utils/categoryNameById';
+import transactionsCategorySorter from '../../../utils/transactionsCategorySorter';
+import transactionsDaySorter from '../../../utils/transactionsDaySorter';
 import EditTransactionModal from '../EditTransactionModal';
 
 export interface MonthTransactionsProps {
@@ -56,13 +59,6 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
     onTransactionSave(transaction);
   };
 
-  const categoryNameById = (categoryId: string): string => (
-    categoryList
-      .find((category: Category):boolean => category.id === categoryId)
-        ?.name
-    ?? ''
-  );
-
   const columns: ColumnsType<Transaction> = [
     {
       title: 'Day',
@@ -73,20 +69,15 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
           ? dayjs(transaction?.date).format('D')
           : ''
       ),
-      sorter: (a: Transaction, b: Transaction): number => a.date.localeCompare(b.date),
+      sorter: transactionsDaySorter,
     },
     {
       title: 'Category',
       dataIndex: 'category',
       render: (_: void, transaction: Transaction): string | undefined => (
-        categoryNameById(transaction.categoryId)
+        categoryNameById(categoryList, transaction.categoryId)
       ),
-      sorter: (a: Transaction, b: Transaction): number => {
-        const aCategoryName: string = categoryNameById(a.categoryId);
-        const bCategoryName: string = categoryNameById(b.categoryId);
-
-        return aCategoryName.localeCompare(bCategoryName);
-      },
+      sorter: transactionsCategorySorter(categoryList),
     },
     {
       title: 'Sum',

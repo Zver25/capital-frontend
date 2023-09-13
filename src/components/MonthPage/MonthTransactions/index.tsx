@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import Category from '../../../entities/Category';
 import Transaction from '../../../entities/Transaction';
 import './styles.scss';
+import { numberFormat } from '../../../utils';
 import categoryNameById from '../../../utils/categoryNameById';
 import transactionsCategorySorter from '../../../utils/transactionsCategorySorter';
 import transactionsDaySorter from '../../../utils/transactionsDaySorter';
@@ -82,8 +83,9 @@ const MonthTransactions: React.FC<MonthTransactionsProps> = ({
     {
       title: 'Sum',
       dataIndex: 'sum',
+      align: 'right',
       render: (_: void, transaction: Transaction): string => (
-        `${transaction?.amount} ${transaction?.currencyCode}`
+        `${numberFormat(transaction?.amount)} ${transaction?.currencyCode}`
       ),
       sorter: (a: Transaction, b: Transaction): number => (
         a.amount - b.amount

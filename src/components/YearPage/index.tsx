@@ -4,7 +4,7 @@ import {
   Row,
   Table,
 } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { ColumnType, ColumnsType } from 'antd/es/table';
 import type { TableProps } from 'rc-table/lib/Table';
 import React, {
   useEffect,
@@ -25,13 +25,15 @@ import YearStatisticRow from './types';
 import useYearPage from './useYearPage';
 import YearSelector from './YearSelector';
 
-const renderCashItem = (cashItems: Array<CashItem>): string => (
+const renderCashItem = (cashItems: Array<CashItem>): JSX.Element[] | string => (
   cashItems && cashItems.length > 0
     ? cashItems
-      .map((item: CashItem): string => (
-        `${numberFormat(item.amount)} ${item.currencyCode}`
+      .map((item: CashItem, index: number): JSX.Element => (
+        <>
+          { `${numberFormat(item.amount)} ${item.currencyCode}` }
+          { index < cashItems.length - 1 && <br /> }
+        </>
       ))
-      .join(', ')
     : numberFormat(0)
 );
 
@@ -57,10 +59,11 @@ const YearPage: React.FC = (): JSX.Element => {
       width: 256,
       fixed: 'left',
     },
-    ...monthList.map((month: Month) => ({
+    ...monthList.map((month: Month): ColumnType<YearStatisticRow> => ({
       title: monthToString(month),
       key: month,
       dataIndex: month,
+      align: 'right',
       width: 128,
       render: (cashItems: Array<CashItem>, row: YearStatisticRow) => (
         cashItems.length > 0 && row.onClick
